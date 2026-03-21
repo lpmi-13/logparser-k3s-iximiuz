@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: log-lab
+---
+apiVersion: lab.learning.io/v1alpha1
+kind: LogParserLab
+metadata:
+  name: log-lab
+  namespace: log-lab
+spec:
+  activity: random

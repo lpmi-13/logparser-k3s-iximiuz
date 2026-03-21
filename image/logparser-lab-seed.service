@@ -1,0 +1,14 @@
+[Unit]
+Description=Seed LogParserLab Custom Resource
+After=logparser-lab-operator.service
+Wants=logparser-lab-operator.service
+
+[Service]
+Type=oneshot
+User=laborant
+Environment=KUBECONFIG=/home/laborant/.kube/config
+ExecStart=/bin/sh -c 'kubectl apply -f /opt/logparser-lab-operator/default-logparserlab.yaml'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,90 @@
+kind: playground
+name: log-parser-lab-k3s-b50b5e9d
+base: k3s
+title: Log Parser Lab
+description: Single-node k3s cluster with a host-run operator that generates one log challenge at a time
+categories:
+    - kubernetes
+playground:
+    networks:
+        - name: local
+          subnet: 172.16.0.0/24
+    machines:
+        - name: cplane-01
+          users:
+            - name: root
+            - name: laborant
+              default: true
+              welcome: |
+                This lab seeds a LogParserLab resource in the "log-lab" namespace. Each round generates a single active log file on disk and expects you to write the correct answer to "/tmp/log-lab/answer.txt".
+
+                Solve the challenge by writing stdout to the answer file:
+
+                $ CURRENT_LOG="$(kubectl get logparserlab -n log-lab log-lab -o jsonpath='{.status.currentLogPath}')"
+                $ cat "${CURRENT_LOG}" | <your pipeline> > /tmp/log-lab/answer.txt
+
+                Useful tools include grep, awk, sed, sort, uniq, head, and wc. Open the notifications tab to watch resets and new rounds appear.
+          drives:
+            - source: oci://ghcr.io/lpmi-13/k3s-logparser-iximiuz:v1
+              mount: /
+              size: 30GiB
+          network:
+            interfaces:
+                - address: 172.16.0.2/24
+                  network: local
+          resources:
+            cpuCount: 2
+            ramSize: 4GiB
+    tabs:
+        - id: terminal-cplane-01
+          kind: terminal
+          name: cplane-01
+          machine: cplane-01
+        - id: http-port-logparser-notifications
+          kind: http-port
+          name: notifications
+          machine: cplane-01
+          number: 8888
+          access: public
+    initTasks:
+        init_cplane_01_1:
+            name: init_cplane_01_1
+            machine: cplane-01
+            init: true
+            user: root
+            timeout_seconds: 90
+            run: |-
+                #!/bin/bash
+
+                for _ in $(seq 1 60); do
+                  if kubectl get --raw=/readyz >/dev/null 2>&1; then
+                    break
+                  fi
+                  sleep 1
+                done
+
+                kubectl get --raw=/readyz >/dev/null 2>&1 || {
+                  echo "k3s API did not become ready in time" >&2
+                  exit 1
+                }
+
+                kubectl wait --for=condition=Established --timeout=60s \
+                  crd/logparserlabs.lab.learning.io
+
+                for _ in $(seq 1 60); do
+                  state="$(kubectl get logparserlab -n log-lab log-lab -o jsonpath='{.status.state}' 2>/dev/null || true)"
+                  if [ "${state}" = "Active" ]; then
+                    exit 0
+                  fi
+                  sleep 1
+                done
+
+                echo "LogParserLab did not become active in time" >&2
+                exit 1
+    accessControl:
+        canList:
+            - owner
+        canRead:
+            - owner
+        canStart:
+            - owner
