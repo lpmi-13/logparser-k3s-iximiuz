@@ -3,7 +3,7 @@ set -euo pipefail
 
 KUBECONFIG_PATH="${KUBECONFIG:-/home/laborant/.kube/config}"
 CRD_PATH="/opt/logparser-lab-operator/lab.learning.io_logparserlabs.yaml"
-LOGS_DIR="/var/lib/logparser-lab/logs"
+LOGS_DIR="/var/log/log-lab"
 
 export KUBECONFIG="${KUBECONFIG_PATH}"
 

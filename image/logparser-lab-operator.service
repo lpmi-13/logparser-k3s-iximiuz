@@ -6,10 +6,10 @@ Wants=k3s.service kubeconfig-setup.service
 [Service]
 Type=simple
 User=laborant
-WorkingDirectory=/var/lib/logparser-lab
+WorkingDirectory=/var/log/log-lab
 Environment=KUBECONFIG=/home/laborant/.kube/config
 ExecStartPre=/opt/iximiuz-labs/bootstrap-logparser-lab.sh
-ExecStart=/usr/local/bin/logparser-lab-operator --logs-dir=/var/lib/logparser-lab/logs --answer-root=/tmp --notification-port=8888 --health-probe-bind-address=0
+ExecStart=/usr/local/bin/logparser-lab-operator --logs-dir=/var/log/log-lab --answer-root=/tmp --notification-port=8888 --health-probe-bind-address=0
 Restart=always
 RestartSec=2
 

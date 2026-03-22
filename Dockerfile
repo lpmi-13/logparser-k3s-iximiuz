@@ -33,8 +33,8 @@ set -eu
 chmod 755 /opt/iximiuz-labs/bootstrap-logparser-lab.sh
 chmod 755 /usr/local/bin/logparser-lab-operator
 
-mkdir -p /var/lib/logparser-lab/logs
-chown -R laborant:laborant /var/lib/logparser-lab
+mkdir -p /var/log/log-lab
+chown -R laborant:laborant /var/log/log-lab
 
 for cmd in awk grep sed sort uniq head wc jq yq rg task just websocat btop kubectl; do
   command -v "${cmd}" >/dev/null 2>&1 || {
