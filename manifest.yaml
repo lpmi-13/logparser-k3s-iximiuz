@@ -24,7 +24,7 @@ playground:
 
                 Useful tools include grep, awk, sed, sort, uniq, head, and wc. Open the notifications tab to watch resets and new rounds appear.
           drives:
-            - source: oci://ghcr.io/lpmi-13/k3s-logparser-iximiuz:v5
+            - source: oci://ghcr.io/lpmi-13/k3s-logparser-iximiuz:v3
               mount: /
               size: 30GiB
           network:
